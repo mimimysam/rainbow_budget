@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<style>
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+p {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.budgetcontainer {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgb(163, 231, 172);
+}
+
+.budgetsection {
+  width: 65%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  width: 100%;
+  height: 10%;
+  text-align: center;
+  border: 2px solid gray;
+  box-sizing: border-box;
+  background-color: rgb(247, 178, 212);
+}
+
+.twocolumns {
+  width: 100%;
+  height: 90%;
+  display: flex;
+  flex-direction: row;
+}
+
+.leftcolumn {
+  width: 50%;
+  height: 100%;
+  text-align: center;
+  border: 2px solid gray;
+  box-sizing: border-box;
+  background-color: rgb(147, 180, 252);
+}
+
+.rightcolumn {
+  width: 50%;
+  height: 100%;
+  text-align: center;
+  border: 2px solid gray;
+  box-sizing: border-box;
+  background-color: rgb(242, 252, 156);
+}
+
+.summary {
+  width: 35%;
+  height: 100%;
+  background-color: rgb(157, 252, 236);
+  border: 2px solid gray;
+  box-sizing: border-box;
+}
+
+.formwrap {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+  font-size: 13px
+}
+
+.entrywrap {
+  width: 90%;
+  height: 70%;
+  text-align: center;
+  margin: 0 auto;
+  border: 2px solid gray;
+  box-sizing: border-box;
+  background-color: rgb(151, 253, 176);
+  overflow: scroll;
+}
+
+.entryheader {
+  width: 100%;
+  height: 40px;
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  margin: 0 auto;
+  border: 2px solid gray;
+  box-sizing: border-box;
+  background-color: rgb(255, 187, 249);
+}
+
+.dateheader {
+  width: 30%;
+  height: 50px;
+}
+
+.descriptionheader {
+  width: 50%;
+  height: 50px;
+}
+
+.amountheader {
+  width: 20%;
+  height: 50px;
+}
+
+.date {
+  width: 30%;
+  height: 50px;
+}
+
+.description {
+  width: 50%;
+  height: 50px;
+}
+
+.amount {
+  width: 20%;
+  height: 50px;
+}
+
+.entry {
+  width: 100%;
+  height: 40px;
+  text-align: center;
+  font-size: 12px;
+  display: flex;
+  flex-direction: row;
+  margin: 0 auto;
+  border: 2px solid gray;
+  box-sizing: border-box;
+  background-color: rgb(255, 237, 187);
+}
+    
+</style>
+
+  <head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  </head>
+  <body>
+    <!-- Delete Income Modal -->
+    <div class="modal fade show" id="deleteIncomeModal" tabindex="-1" role="dialog" aria-labelledby="deleteIncomeModalLabel">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="deleteIncomeModalLabel">Delete this income?</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <button type="button" id="delete-btn">Delete</button>
+          </div>
+      </div>
+    </div>
+
+    <div class="budgetcontainer">
+    <div class="budgetsection">
+        <div class="header">
+            <h1>Monthly Budget</h1>
+        </div>
+
+        <div class="twocolumns">
+
+        <div class="leftcolumn">
+            <h2>INCOME</h2>
+        <div class="formwrap">
+            <text>Add entry: </text>
+            <form id="incomeentry" method="POST" action="/">
+              <input type="text" name="incomesource" id="incomesource" placeholder="income name...">
+              <input type="text" name="incomeamount" id="incomeamount" placeholder="$">
+              <input type="submit" value="Add" id="incomeaddbtn">
+            </form>
+        </div>
+
+    <div class="entrywrap" id="entrywrap">
+      <div class="entryheader">
+          <div class="dateheader">DATE</div>
+          <div class="descriptionheader">DESCRIPTION</div>
+          <div class="amountheader">AMOUNT</div>
+      </div>
+      <div id="incomeentrywrap">
+      {% for income in allIncome %}
+      <div class="entry" id="entry" title={{income.id}}>
+          <div class="date">{{income.date}}</div>
+          <div class="description">{{income.description}}</div>
+          <div class="amount">{{income.amount}}</div>
+      </div>
+      {% endfor %}
+      </div>
+    </div>
+        <h3 id="totalincome"></h3>
+        </div>    
+
+        <div class="rightcolumn">
+        <h2>EXPENSES</h2>
+        <div class="formwrap">
+            <text>Add entry: </text>
+            <form id="expenseentry" autocomplete="off" method="POST" action="/">
+              <input type="text" name="expensesource" id="expensesource" placeholder="expense name...">
+              <input type="text" name="expenseamount" id="expenseamount" placeholder="$">
+              <input type="submit" value="Add" id="expenseaddbtn">
+          </form>
+        </div>
+        <div class="entrywrap" id="entrywrap">
+            <div class="entryheader">
+                <div class="dateheader">DATE</div>
+                <div class="descriptionheader">DESCRIPTION</div>
+                <div class="amountheader">AMOUNT</div>
+            </div>
+            <div id="expenseentrywrap">
+              {% for expense in allExpense %}
+              <div class="entry" id="entry">
+                  <div class="date">{{expense.date}}</div>
+                  <div class="description">{{expense.description}}</div>
+                  <div class="expenseamount">{{expense.amount}}</div>
+              </div>
+              {% endfor %}
+              </div>
+        </div>
+        <h3 id="totalexpense"></h3>
+        </div>
+        </div>
+    </div>
+
+    <div class="summary">
+        <h3>Monthly Summary:</h3>
+    </div>
+    </div>
+    <script src="static/js/app.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>  
+  </body>
+</html>
