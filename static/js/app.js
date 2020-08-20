@@ -1,6 +1,6 @@
 function getAllIncome() {
     // document.getElementById('incomeentrywrap').innerHTML = ""
-    fetch(`/income`)
+    fetch('/income')
         .then(response => response.json())
         console.log(response) 
         .then(dataObj => {
@@ -68,7 +68,7 @@ function calculateTotalIncome() {
     const reducer = (accumulator, currentValue) => accumulator + currentValue;
     let totalIncome = savedIncome.reduce(reducer);
     console.log(totalIncome);
-    document.getElementById('totalincome').innerHTML = "Total income: $" + totalIncome
+    document.getElementById('totalincome').innerHTML = totalIncome
 }
 calculateTotalIncome()
 
@@ -82,20 +82,26 @@ function calculateTotalExpense() {
     const reducer = (accumulator, currentValue) => accumulator + currentValue;
     let totalExpense = savedExpense.reduce(reducer);
     console.log(totalExpense);
-    document.getElementById('totalexpense').innerHTML = "Total expense: $" + totalExpense
+    document.getElementById('totalexpense').innerHTML = totalExpense
 }
 calculateTotalExpense()
 
+var income = parseFloat(document.getElementById('totalincome').innerHTML)
+var expense = parseFloat(document.getElementById('totalexpense').innerHTML)
+var savings = income - expense
+console.log(savings)
+document.getElementById('savings').innerHTML = "Total savings: $" + savings
+
 let incomebox = document.getElementsByClassName("entry")
 Array.from(incomebox).forEach(function(element) {
-    element.addEventListener('click', incomeClick);
-  });
+    element.addEventListener('click', incomeClick)
+})
 
 function incomeClick(event) {
     let entry = event.target.closest(".entry");
     let id = entry.getAttribute('title');
     deleteBtn.setAttribute('data-id', id);
-    $('#deleteIncomeModal').modal('show');
+    $('#deleteEntryModal').modal('show');
 }
 
 let deleteBtn = document.getElementById('delete-btn');
@@ -116,7 +122,44 @@ function deleteIncome(event) {
     fetch(`/income/delete/${id}`, postParams)
 //        .then(res => res.json())
         .then(res => {
-            $('#deleteIncomeModal').modal('hide')
+            $('#deleteEntryModal').modal('hide')
+    });
+    // document.getElementById("incomesource").value = " ";
+    // document.getElementById("incomeamount").value = " ";
+    location.reload()
+}
+
+let expensebox = document.getElementsByClassName("expenseentry")
+Array.from(expensebox).forEach(function(element) {
+    element.addEventListener('click', expenseClick);
+  });
+
+function expenseClick(event) {
+    let entry = event.target.closest(".expenseentry");
+    let id = entry.getAttribute('title');
+    deleteExpBtn.setAttribute('data-id', id);
+    $('#deleteExpenseModal').modal('show');
+}
+
+let deleteExpBtn = document.getElementById('delete-expense-btn');
+deleteExpBtn.addEventListener('click', deleteExpense);
+
+function deleteExpense(event) {
+    event.preventDefault();
+    let id = event.target.dataset.id
+    let postParams = {
+       method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
+       headers: {
+           'Content-Type': 'application/json; charset=UTF-8',
+           'Access-Control-Allow-Headers': "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With",
+           'Access-Control-Allow-Origin':'*'
+       },
+//       body: JSON.stringify()
+    };
+    fetch(`/expense/delete/${id}`, postParams)
+//        .then(res => res.json())
+        .then(res => {
+            $('#deleteExpenseModal').modal('hide')
     });
     // document.getElementById("incomesource").value = " ";
     // document.getElementById("incomeamount").value = " ";
@@ -167,4 +210,49 @@ function addExpenseEntry(event) {
         //  .then(res => {
         //      calculateTotalIncome()
     //  });
+}
+
+window.onload = function() {
+
+    var percentExpense = (expense/income) * 100
+    var percentSavings = (savings/income) * 100
+
+    var chart = new CanvasJS.Chart("chartContainer", {
+        animationEnabled: true,
+        title: {
+            text: "Expense : Savings"
+        },
+        data: [{
+            type: "pie",
+            startAngle: 240,
+            yValueFormatString: "##0.00\"%\"",
+            indexLabel: "{label} {y}",
+            dataPoints: [
+                {y: percentExpense, label: "Expense"},
+                {y: percentSavings, label: "Savings"},
+    
+            ]
+        }]
+    });
+    chart.render();
+}
+
+function createExpDescList() {
+    fetch(`expense/desc`)
+        .then(response => response.json())
+        .then(dataObj => {
+            console.log(dataObj)
+
+            dataObj.forEach(expense => {
+                createExpItem(expense)
+            })
+        })
+    }
+createExpDescList()
+
+function createExpItem(expense) {
+    let expDescList = document.getElementById('expDescList')
+    let expenseItem = document.createElement('li');
+    expenseItem.innerHTML = expense.description + "  ---  " + expense.amount;
+    expDescList.appendChild(expenseItem)
 }

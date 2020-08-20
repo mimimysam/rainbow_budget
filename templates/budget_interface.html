@@ -76,6 +76,7 @@ p {
   background-color: rgb(157, 252, 236);
   border: 2px solid gray;
   box-sizing: border-box;
+  overflow: scroll;
 }
 
 .formwrap {
@@ -152,6 +153,19 @@ p {
   box-sizing: border-box;
   background-color: rgb(255, 237, 187);
 }
+
+.expenseentry {
+  width: 100%;
+  height: 40px;
+  text-align: center;
+  font-size: 12px;
+  display: flex;
+  flex-direction: row;
+  margin: 0 auto;
+  border: 2px solid gray;
+  box-sizing: border-box;
+  background-color: rgb(255, 237, 187);
+}
     
 </style>
 
@@ -160,16 +174,31 @@ p {
   </head>
   <body>
     <!-- Delete Income Modal -->
-    <div class="modal fade show" id="deleteIncomeModal" tabindex="-1" role="dialog" aria-labelledby="deleteIncomeModalLabel">
+    <div class="modal fade show" id="deleteEntryModal" tabindex="-1" role="dialog" aria-labelledby="deleteEntryModalLabel">
       <div class="modal-dialog" role="document">
           <div class="modal-content">
               <div class="modal-header">
-                  <h5 class="modal-title" id="deleteIncomeModalLabel">Delete this income?</h5>
+                  <h5 class="modal-title" id="deleteEntryModalLabel">Delete this income?</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                   </button>
               </div>
               <button type="button" id="delete-btn">Delete</button>
+          </div>
+      </div>
+    </div>
+
+    <!-- Delete Expense Modal -->
+    <div class="modal fade show" id="deleteExpenseModal" tabindex="-1" role="dialog" aria-labelledby="deleteExpenseModalLabel">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="deleteExpenseModalLabel">Delete this expense?</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <button type="button" id="delete-expense-btn">Delete</button>
           </div>
       </div>
     </div>
@@ -209,7 +238,7 @@ p {
       {% endfor %}
       </div>
     </div>
-        <h3 id="totalincome"></h3>
+        <h4>Total income: </h4><h4 id="totalincome"></h4>
         </div>    
 
         <div class="rightcolumn">
@@ -230,7 +259,7 @@ p {
             </div>
             <div id="expenseentrywrap">
               {% for expense in allExpense %}
-              <div class="entry" id="entry">
+              <div class="expenseentry" id="expenseentry" title={{expense.id}}>
                   <div class="date">{{expense.date}}</div>
                   <div class="description">{{expense.description}}</div>
                   <div class="expenseamount">{{expense.amount}}</div>
@@ -238,18 +267,24 @@ p {
               {% endfor %}
               </div>
         </div>
-        <h3 id="totalexpense"></h3>
+        <h4>Total expenses: </h4><h4 id="totalexpense"></h4>
         </div>
         </div>
     </div>
 
     <div class="summary">
-        <h3>Monthly Summary:</h3>
+        <h3>Monthly Summary:</h3><br>
+        <h4 id="savings"></h4><br>
+        <div id="chartContainer" style="height: 300px; width: 100%;"></div><br>
+        <h4>Largest Expenses:</h4>
+        <ol id=expDescList></ol>
+
     </div>
     </div>
     <script src="static/js/app.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>  
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
   </body>
 </html>

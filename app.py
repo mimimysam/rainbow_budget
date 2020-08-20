@@ -114,3 +114,14 @@ def insert_expense(description, amount):
     db.session.commit()
     # return '<h2>new expense entry added</h2>'
 
+@app.route('/expense/delete/<id>', methods=["DELETE"])
+def delete_expense(id):
+    expense = Expense.query.filter_by(id=id).delete()
+    db.session.commit()
+    # return '<h2>expense entry has been deleted</h2>'
+
+@app.route('/expense/desc')
+def show_expense_desc():
+    expense = Expense.query.order_by(Expense.amount.desc())
+    result = expense_schema.dump(expense)
+    return jsonify(result)
