@@ -136,6 +136,11 @@ p {
   height: 50px;
 }
 
+.expensedescription {
+  width: 50%;
+  height: 50px;
+}
+
 .amount {
   width: 20%;
   height: 50px;
@@ -261,7 +266,7 @@ p {
               {% for expense in allExpense %}
               <div class="expenseentry" id="expenseentry" title={{expense.id}}>
                   <div class="date">{{expense.date}}</div>
-                  <div class="description">{{expense.description}}</div>
+                  <div class="expensedescription">{{expense.description}}</div>
                   <div class="expenseamount">{{expense.amount}}</div>
               </div>
               {% endfor %}
@@ -278,8 +283,7 @@ p {
         <div id="chartContainer" style="height: 300px; width: 100%;"></div><br>
         <h4>Largest Expenses:</h4>
         <ol id=expDescList></ol>
-
-    </div>
+        <div id="expChartContainer" style="height: 370px; width: 100%;"></div>
     </div>
     <script src="static/js/app.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>

@@ -7,8 +7,8 @@ function getAllIncome() {
             console.log(dataObj)
             // createIncomeBoxes(dataObj)
         })
-};
-// getAllIncome();
+}
+// getAllIncome()
 
 function getSingleIncome() {
     document.getElementById('incomeentrywrap').innerHTML = ""
@@ -72,15 +72,16 @@ function calculateTotalIncome() {
 }
 calculateTotalIncome()
 
-function calculateTotalExpense() {
-    let expenseAmounts = Array.from(document.getElementsByClassName('expenseamount'));
-    let savedExpense = [];
+var expenseAmounts = Array.from(document.getElementsByClassName('expenseamount'));
+var savedExpAmt = [];
     for (var i of expenseAmounts){
-        savedExpense.push(parseFloat(i.innerHTML))
+        savedExpAmt.push(parseFloat(i.innerHTML))
     }
-    console.log(savedExpense)
+console.log(savedExpAmt)
+
+function calculateTotalExpense() {
     const reducer = (accumulator, currentValue) => accumulator + currentValue;
-    let totalExpense = savedExpense.reduce(reducer);
+    var totalExpense = savedExpAmt.reduce(reducer);
     console.log(totalExpense);
     document.getElementById('totalexpense').innerHTML = totalExpense
 }
@@ -91,6 +92,33 @@ var expense = parseFloat(document.getElementById('totalexpense').innerHTML)
 var savings = income - expense
 console.log(savings)
 document.getElementById('savings').innerHTML = "Total savings: $" + savings
+
+var expenseDescriptions = Array.from(document.getElementsByClassName('expensedescription'));
+var savedExpDescription = []
+    for (var i of expenseDescriptions){
+        savedExpDescription.push(i.innerHTML)
+    }
+console.log(savedExpDescription)
+
+var expByName = {};
+for (var i=0; i<savedExpDescription.length; i++) {
+    expByName[savedExpDescription[i]] = expByName[savedExpDescription[i]] || 0;
+    expByName[savedExpDescription[i]] += savedExpAmt[i];
+}
+console.log(expByName)
+
+function percentOfExp() {
+    var expByPercent = []
+
+    for (let value in expByName) {
+        expPercent = (expByName[value]/expense)*100
+        expByPercent.push(expPercent)
+        expByName[value] = (expByName[value]/expense)*100
+    }
+    console.log(expByPercent)
+    console.log(expByName)
+}
+percentOfExp()
 
 let incomebox = document.getElementsByClassName("entry")
 Array.from(incomebox).forEach(function(element) {
@@ -183,10 +211,6 @@ function addIncomeEntry(event) {
         body: JSON.stringify()
      };
      fetch(`/income/${description}/${amount}`, postParams)
-        //  .then(res => res.json())
-        //  .then(res => {
-        //      calculateTotalIncome()
-    //  });
 }
 
 let addExpenseBtn = document.getElementById('expenseaddbtn');
@@ -206,10 +230,25 @@ function addExpenseEntry(event) {
         body: JSON.stringify()
      };
      fetch(`/expense/${description}/${amount}`, postParams)
-        //  .then(res => res.json())
-        //  .then(res => {
-        //      calculateTotalIncome()
-    //  });
+}
+
+function createExpDescList() {
+    fetch(`expense/desc`)
+        .then(response => response.json())
+        .then(dataObj => {
+            console.log(dataObj)
+            dataObj.forEach(expense => {
+                createExpItem(expense)
+            })
+        })
+    }
+createExpDescList()
+
+function createExpItem(expense) {
+    let expDescList = document.getElementById('expDescList')
+    let expenseItem = document.createElement('li');
+    expenseItem.innerHTML = expense.description + "  ---  " + expense.amount;
+    expDescList.appendChild(expenseItem)
 }
 
 window.onload = function() {
@@ -237,22 +276,34 @@ window.onload = function() {
     chart.render();
 }
 
-function createExpDescList() {
-    fetch(`expense/desc`)
-        .then(response => response.json())
-        .then(dataObj => {
-            console.log(dataObj)
+//EXPENSE PIE CHART
+window.onload = function () {
 
-            dataObj.forEach(expense => {
-                createExpItem(expense)
-            })
-        })
+let expData = Object.entries(expByName)
+    .map(([ label, y ] ) => ({ label, y }))
+
+    var chart2 = new CanvasJS.Chart("expChartContainer", {
+        theme: "light2",
+        animationEnabled: true,
+        title: {
+            text: "Expenses"
+        },
+        data: [{
+            type: "pie",
+            indexLabelFontSize: 18,
+            radius: 80,
+            indexLabel: "{label} - {y}",
+            yValueFormatString: "###0.0\"%\"",
+            click: explodePie,
+            dataPoints: expData
+        }]
+    });
+    chart2.render();
+    
+    function explodePie(e) {
+        for(var i = 0; i < e.dataSeries.dataPoints.length; i++) {
+            if(i !== e.dataPointIndex)
+                e.dataSeries.dataPoints[i].exploded = false;
+        }
     }
-createExpDescList()
-
-function createExpItem(expense) {
-    let expDescList = document.getElementById('expDescList')
-    let expenseItem = document.createElement('li');
-    expenseItem.innerHTML = expense.description + "  ---  " + expense.amount;
-    expDescList.appendChild(expenseItem)
 }
