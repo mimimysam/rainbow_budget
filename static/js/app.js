@@ -274,10 +274,10 @@ window.onload = function() {
         }]
     });
     chart.render();
-}
+// }
 
-//EXPENSE PIE CHART
-window.onload = function () {
+// //EXPENSE PIE CHART
+// window.onload = function () {
 
 let expData = Object.entries(expByName)
     .map(([ label, y ] ) => ({ label, y }))
