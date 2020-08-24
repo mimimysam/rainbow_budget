@@ -8,7 +8,6 @@ function getAllIncome() {
             // createIncomeBoxes(dataObj)
         })
 }
-// getAllIncome()
 
 function getSingleIncome() {
     document.getElementById('incomeentrywrap').innerHTML = ""
@@ -20,12 +19,10 @@ function getSingleIncome() {
             createIncomeBox(dataObj)
         })
 };
-// getSingleIncome();
 
 function createIncomeBoxes(dataObj){
     document.getElementById('incomeentrywrap').innerHTML = ""
     let incomeArr = dataObj.data;
-    // let sorted = incomeArr.sort((a, b) => new Date(b.date.replace(/ /g,"T")) - new Date(a.date.replace(/ /g,"T")))
     incomeArr.forEach(income => {
         savedIncome.push(income)
         createIncomeBox(income)
@@ -33,7 +30,6 @@ function createIncomeBoxes(dataObj){
 }
 
 function createIncomeBox(income) {
-    //Make Wrapper Div and attach Click listener
     let incomeBox = document.createElement('div');
     incomeBox.classList.add('entry');
     incomeBox.setAttribute('data-id', income.id);
@@ -109,7 +105,6 @@ console.log(expByName)
 
 function percentOfExp() {
     var expByPercent = []
-
     for (let value in expByName) {
         expPercent = (expByName[value]/expense)*100
         expByPercent.push(expPercent)
@@ -152,8 +147,6 @@ function deleteIncome(event) {
         .then(res => {
             $('#deleteEntryModal').modal('hide')
     });
-    // document.getElementById("incomesource").value = " ";
-    // document.getElementById("incomeamount").value = " ";
     location.reload()
 }
 
@@ -189,8 +182,6 @@ function deleteExpense(event) {
         .then(res => {
             $('#deleteExpenseModal').modal('hide')
     });
-    // document.getElementById("incomesource").value = " ";
-    // document.getElementById("incomeamount").value = " ";
     location.reload()
 }
 
@@ -274,13 +265,9 @@ window.onload = function() {
         }]
     });
     chart.render();
-// }
 
-// //EXPENSE PIE CHART
-// window.onload = function () {
-
-let expData = Object.entries(expByName)
-    .map(([ label, y ] ) => ({ label, y }))
+    let expData = Object.entries(expByName)
+        .map(([ label, y ] ) => ({ label, y }))
 
     var chart2 = new CanvasJS.Chart("expChartContainer", {
         theme: "light2",
