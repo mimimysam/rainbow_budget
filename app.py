@@ -1,9 +1,13 @@
-from flask import Flask, request, jsonify, render_template, make_response
+from flask import Flask, Response, request, jsonify, render_template, make_response
 from datetime import datetime
 import json
 from flask_sqlalchemy import SQLAlchemy
 import sqlite3
 from flask_marshmallow import Marshmallow
+import csv
+from io import StringIO
+import sys
+
 
 app = Flask(__name__)
 
@@ -86,7 +90,7 @@ def insert_income(description,amount):
     income = Income(description=description, amount=amount)
     db.session.add(income)
     db.session.commit()
-    # return "<h2>new income entry added</h2>"
+    return "<h2>new income entry added</h2>"
 
 @app.route('/income/delete/<id>', methods=["DELETE"])
 def delete_income(id):
@@ -112,7 +116,7 @@ def insert_expense(description, amount):
     expense = Expense(description=description, amount=amount)
     db.session.add(expense)
     db.session.commit()
-    # return '<h2>new expense entry added</h2>'
+    return '<h2>new expense entry added</h2>'
 
 @app.route('/expense/delete/<id>', methods=["DELETE"])
 def delete_expense(id):
@@ -125,3 +129,33 @@ def show_expense_desc():
     expense = Expense.query.order_by(Expense.amount.desc())
     result = expense_schema.dump(expense)
     return jsonify(result)
+
+### ======================EXPORT AND RESET METHODS====================== ###
+
+@app.route('/export', methods=['GET'])
+def export(): 
+    with sqlite3.connect("db.sqlite3") as connection:
+        si = StringIO()
+        csvWriter = csv.writer(si)
+        c = connection.cursor()
+
+        c.execute("select * from income")
+        rows = c.fetchall()
+        for i in rows:
+            csvWriter.writerow(i)
+
+        c.execute("select * from expense")
+        rows2 = c.fetchall()
+        for e in rows2:
+            csvWriter.writerow(e)
+
+        output = make_response(si.getvalue())
+        output.headers["Content-Disposition"] = "attachment; filename=budget_export.csv"
+        output.headers["Content-type"] = "text/csv"
+        return output
+
+@app.route('/reset', methods=['DELETE'])
+def delete_all_records():
+    db.session.query(Income).delete()
+    db.session.query(Expense).delete()
+    db.session.commit()

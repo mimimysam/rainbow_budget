@@ -1,59 +1,3 @@
-function getAllIncome() {
-    // document.getElementById('incomeentrywrap').innerHTML = ""
-    fetch('/income')
-        .then(response => response.json())
-        console.log(response) 
-        .then(dataObj => {
-            console.log(dataObj)
-            // createIncomeBoxes(dataObj)
-        })
-}
-
-function getSingleIncome() {
-    document.getElementById('incomeentrywrap').innerHTML = ""
-    fetch('/income/<id>')
-        .then(response => response.json())
-        .then(dataObj => {
-            console.log(dataObj)
-            // console.log(dataObj.id)
-            createIncomeBox(dataObj)
-        })
-};
-
-function createIncomeBoxes(dataObj){
-    document.getElementById('incomeentrywrap').innerHTML = ""
-    let incomeArr = dataObj.data;
-    incomeArr.forEach(income => {
-        savedIncome.push(income)
-        createIncomeBox(income)
-    })
-}
-
-function createIncomeBox(income) {
-    let incomeBox = document.createElement('div');
-    incomeBox.classList.add('entry');
-    incomeBox.setAttribute('data-id', income.id);
-
-    let date = document.createElement('div')
-    date.classList.add("date")
-    date.innerHTML = income.date;
-
-    let description = document.createElement('div')
-    description.classList.add("description")
-    description.innerHTML = income.description;
-
-    let amount = document.createElement('div')
-    amount.classList.add("amount")
-    amount.innerHTML = income.amount;
-
-    incomeBox.appendChild(date)
-    incomeBox.appendChild(description)
-    incomeBox.appendChild(amount)
-
-    let incomeentrywrap = document.getElementById("incomeentrywrap")
-    incomeentrywrap.appendChild(incomeBox)
- }
-
 function calculateTotalIncome() {
     let incomeAmounts = Array.from(document.getElementsByClassName('amount'));
     let savedIncome = [];
@@ -189,7 +133,7 @@ let addIncomeBtn = document.getElementById('incomeaddbtn');
 addIncomeBtn.addEventListener('click', addIncomeEntry)
 
 function addIncomeEntry(event) {
-    // event.preventDefault();
+    event.preventDefault();
     let description = document.getElementById('incomesource').value;
     let amount = document.getElementById('incomeamount').value;
     let postParams = {
@@ -202,6 +146,7 @@ function addIncomeEntry(event) {
         body: JSON.stringify()
      };
      fetch(`/income/${description}/${amount}`, postParams)
+     location.reload()
 }
 
 let addExpenseBtn = document.getElementById('expenseaddbtn');
@@ -294,3 +239,26 @@ window.onload = function() {
         }
     }
 }
+
+document.getElementById("exportbutton").onclick = function () {
+    location.href = "http://127.0.0.1:5000/export";
+};
+
+let resetbtn = document.getElementById('resetbutton');
+resetbtn.addEventListener('click', resetbudget)
+
+function resetbudget(event) {
+    event.preventDefault();
+    let postParams = {
+        method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
+        headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Access-Control-Allow-Headers': "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With",
+            'Access-Control-Allow-Origin':'*'
+        },
+        // body: JSON.stringify()
+     };
+     fetch(`/reset`, postParams)
+     location.reload()
+}
+

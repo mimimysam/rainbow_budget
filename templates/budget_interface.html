@@ -45,6 +45,10 @@ p {
   background-color: rgb(247, 178, 212);
 }
 
+.headerrow {
+  display: inline-block;
+}
+
 .twocolumns {
   width: 100%;
   height: 90%;
@@ -211,7 +215,9 @@ p {
     <div class="budgetcontainer">
     <div class="budgetsection">
         <div class="header">
-            <h1>Monthly Budget</h1>
+            <div class="headerrow"><h1>Monthly Budget</h1></div>
+            <div class="headerrow"><button type="button" class="exportbutton" id="exportbutton">Export</button></div>
+            <div class="headerrow"><button type="button" class="resetbutton" id="resetbutton">Reset</button></div>
         </div>
 
         <div class="twocolumns">
