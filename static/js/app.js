@@ -8,7 +8,7 @@ function calculateTotalIncome() {
     const reducer = (accumulator, currentValue) => accumulator + currentValue;
     let totalIncome = savedIncome.reduce(reducer);
     console.log(totalIncome);
-    document.getElementById('totalincome').innerHTML = totalIncome
+    document.getElementById('totalincome').innerHTML = totalIncome;
 }
 calculateTotalIncome()
 
@@ -23,7 +23,7 @@ function calculateTotalExpense() {
     const reducer = (accumulator, currentValue) => accumulator + currentValue;
     var totalExpense = savedExpAmt.reduce(reducer);
     console.log(totalExpense);
-    document.getElementById('totalexpense').innerHTML = totalExpense
+    document.getElementById('totalexpense').innerHTML = totalExpense;
 }
 calculateTotalExpense()
 
@@ -84,10 +84,8 @@ function deleteIncome(event) {
            'Access-Control-Allow-Headers': "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With",
            'Access-Control-Allow-Origin':'*'
        },
-//       body: JSON.stringify()
     };
     fetch(`/income/delete/${id}`, postParams)
-//        .then(res => res.json())
         .then(res => {
             $('#deleteEntryModal').modal('hide')
     });
@@ -119,10 +117,8 @@ function deleteExpense(event) {
            'Access-Control-Allow-Headers': "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With",
            'Access-Control-Allow-Origin':'*'
        },
-//       body: JSON.stringify()
     };
     fetch(`/expense/delete/${id}`, postParams)
-//        .then(res => res.json())
         .then(res => {
             $('#deleteExpenseModal').modal('hide')
     });
@@ -153,11 +149,9 @@ let addExpenseBtn = document.getElementById('expenseaddbtn');
 addExpenseBtn.addEventListener('click', addExpenseEntry)
 
 function addExpenseEntry(event) {
-    // event.preventDefault();
     let description = document.getElementById('expensesource').value;
     let amount = document.getElementById('expenseamount').value;
     let postParams = {
-        // method: 'POST', // *GET, POST, PUT, DELETE, etc.
         headers: {
             'Content-Type': 'application/json; charset=UTF-8',
             'Access-Control-Allow-Headers': "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With",
@@ -256,7 +250,6 @@ function resetbudget(event) {
             'Access-Control-Allow-Headers': "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With",
             'Access-Control-Allow-Origin':'*'
         },
-        // body: JSON.stringify()
      };
      fetch(`/reset`, postParams)
      location.reload()
