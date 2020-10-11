@@ -6,4 +6,4 @@ A simple three-columned budget application with CRUD operations and CanvasJS gra
 
 Python, Flask, HTML/CSS, JavaScript, SQLAlchemy
 
-![alt text](https://github.com/mimimysam/rainbow_budget/blob/master/rainbow_budget_screen_shot.png)
+![alt text](https://github.com/mimimysam/rainbow_budget/blob/master/budget_screen_shot.png)
